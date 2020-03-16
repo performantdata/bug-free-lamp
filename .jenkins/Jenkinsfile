@@ -1,8 +1,11 @@
 pipeline {
     agent {
         docker {
-            image 'openjdk:8-jdk-buster'
+            image 'circleci/openjdk:8-jdk-buster'
         }
+//         dockerfile {
+//            filename 'Dockerfile.build'
+//         }
     }
 
     stages {
