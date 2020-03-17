@@ -1,4 +1,10 @@
 pipeline {
+    environment {
+        // These JVM system properties are for sbt, and may be other Java applications.
+        // sbt needs user.home for locating its caches.
+        JAVA_OPTS = '-Duser.home=/var/lib/jenkins/workspace/griffon'
+    }
+
     agent {
         dockerfile {
             filename 'Dockerfile.build'
@@ -17,8 +23,7 @@ pipeline {
             steps {
                 echo 'Building..'
                 sh 'printenv'
-                sh 'java -XshowSettings:all'
-                sh 'sbt -Duser.home=/var/lib/jenkins/workspace/griffon test:compile'
+                sh 'sbt test:compile'
 //                 archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
             }
         }
@@ -43,7 +48,7 @@ pipeline {
     post {
         cleanup {
 //             sh 'echo'
-            sh 'rm -rf ?'
+            sh 'rm -rf .* *'
         }
     }
 }
