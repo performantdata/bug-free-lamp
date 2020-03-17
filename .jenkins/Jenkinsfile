@@ -14,9 +14,6 @@ pipeline {
     stages {
         stage('Build') {
             steps {
-                preBuildCleanup {
-                    deleteDirectories()
-                }
                 echo 'Building..'
                 sh 'sbt test:compile'
                 archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
@@ -36,6 +33,20 @@ pipeline {
             }
             steps {
                 echo 'Deploying....'
+            }
+        }
+    }
+
+    post {
+        cleanup {
+            cleanWs {
+            cleanWhenAborted(true)
+                cleanWhenFailure(true)
+                cleanWhenNotBuilt(false)
+                cleanWhenSuccess(true)
+                cleanWhenUnstable(true)
+                deleteDirs(true)
+                notFailBuild(true)
             }
         }
     }
