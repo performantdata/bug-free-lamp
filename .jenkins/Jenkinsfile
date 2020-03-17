@@ -6,6 +6,7 @@ pipeline {
 //         }
         dockerfile {
            filename 'Dockerfile.build'
+           dir '.jenkins'
         }
     }
 
