@@ -2,7 +2,7 @@ pipeline {
     agent {
         docker {
             image 'circleci/openjdk:8-jdk-buster'
-            args '--volume $WORKSPACE/.cache:/root/.cache --volume $WORKSPACE/.ivy2:/root/.ivy2 --volume $WORKSPACE/.m2:/root/.m2 --volume $WORKSPACE/.sbt:/root/.sbt'
+            args '--volume ${env.WORKSPACE}/.cache:/root/.cache --volume ${env.WORKSPACE}/.ivy2:/root/.ivy2 --volume ${env.WORKSPACE}/.m2:/root/.m2 --volume ${env.WORKSPACE}/.sbt:/root/.sbt'
         }
 //         dockerfile {
 //            filename 'Dockerfile.build'
