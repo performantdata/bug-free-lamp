@@ -7,7 +7,8 @@ pipeline {
             dir 'repo/.jenkins'
 
             // HOME=/home/circleci on this image
-            args '--volume $WORKSPACE/.cache:/home/circleci/.cache --volume $WORKSPACE/.ivy2:/home/circleci/.ivy2 --volume $WORKSPACE/.m2:/home/circleci/.m2 --volume $WORKSPACE/.sbt:/home/circleci/.sbt'
+            // 3434 is the circleci user/group
+            args '--user 3434:3434 --volume $WORKSPACE/.cache:/home/circleci/.cache --volume $WORKSPACE/.ivy2:/home/circleci/.ivy2 --volume $WORKSPACE/.m2:/home/circleci/.m2 --volume $WORKSPACE/.sbt:/home/circleci/.sbt'
         }
     }
 
@@ -20,6 +21,7 @@ pipeline {
                 sh 'pwd'
                 sh 'cat /etc/passwd'
                 sh 'cat /etc/group'
+                sh 'ls -arF'
                 sh 'sbt test:compile'
                 archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
             }
