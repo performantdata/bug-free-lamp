@@ -6,9 +6,8 @@ pipeline {
             // 'repo' is defined in the Jenkins Pipeline Git config
             dir 'repo/.jenkins'
 
-            // HOME=/home/circleci on this image
-            // 3434 is the circleci user/group
-            args '--volume $WORKSPACE/.cache:/home/circleci/.cache --volume $WORKSPACE/.ivy2:/home/circleci/.ivy2 --volume $WORKSPACE/.m2:/home/circleci/.m2 --volume $WORKSPACE/.sbt:/home/circleci/.sbt'
+            // Jenkins' Docker setup mirrors the current directory into the image
+            args '--env HOME=$(pwd)'
         }
     }
 
@@ -17,11 +16,6 @@ pipeline {
             steps {
                 echo 'Building..'
                 sh 'printenv'
-                sh 'id'
-                sh 'pwd'
-                sh 'cat /etc/passwd'
-                sh 'cat /etc/group'
-                sh 'ls -aRF'
                 sh 'sbt test:compile'
                 archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
             }
