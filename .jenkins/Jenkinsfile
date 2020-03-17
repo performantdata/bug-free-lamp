@@ -17,6 +17,9 @@ pipeline {
                 echo 'Building..'
                 sh 'printenv'
                 sh 'id'
+                sh 'pwd'
+                sh 'cat /etc/passwd'
+                sh 'cat /etc/group'
                 sh 'sbt test:compile'
                 archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
             }
