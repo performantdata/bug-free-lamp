@@ -1,4 +1,4 @@
 # Docker image for building/testing/deploying the project
 FROM circleci/openjdk:8-jdk-buster
-WORKDIR /project
+ENV COURSIER_CACHE /var/lib/jenkins/workspace/griffon/.cache/coursier/v1
 RUN printenv
