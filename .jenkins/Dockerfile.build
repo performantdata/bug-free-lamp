@@ -1,4 +1,7 @@
 # Docker image for building/testing/deploying the project
 FROM circleci/openjdk:8-jdk-buster
-ENV COURSIER_CACHE /var/lib/jenkins/workspace/griffon/.cache/coursier/v1
+
+# These JVM system properties are for sbt, and may be used by other Java applications.
+# sbt needs user.home for locating its caches.
+ENV JAVA_OPTS "-Duser.home=/var/lib/jenkins/workspace/griffon"
 RUN printenv
