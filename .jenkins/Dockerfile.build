@@ -1,0 +1,4 @@
+# Docker image for building/testing/deploying the project
+FROM circleci/openjdk:8-jdk-buster
+WORKDIR /project
+RUN printenv
