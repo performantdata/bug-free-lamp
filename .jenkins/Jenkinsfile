@@ -17,8 +17,9 @@ pipeline {
             steps {
                 echo 'Building..'
                 sh 'printenv'
-                sh 'sbt -Dsbt.global.base=.sbt -Dsbt.boot.directory=.sbt -Dsbt.ivy.home=.ivy2 test:compile'
-                archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
+                sh 'java -XshowSettings:all'
+                sh 'sbt -Duser.home=/var/lib/jenkins/workspace/griffon test:compile'
+//                 archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
             }
         }
         stage('Test') {
