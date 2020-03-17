@@ -39,6 +39,7 @@ pipeline {
 
     post {
         cleanup {
+            sh 'echo'
 //             sh 'rm -rf * .*'
         }
     }
