@@ -8,7 +8,7 @@ pipeline {
 
             // Jenkins' Docker setup mirrors the current directory into the image
             //TODO Create this from pwd().
-            args "--env HOME=${WORKSPACE}/griffon"
+            args "--env HOME=${env.WORKSPACE}/griffon"
         }
     }
 
