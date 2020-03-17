@@ -6,7 +6,8 @@ pipeline {
 //         }
         dockerfile {
            filename 'Dockerfile.build'
-           dir '.jenkins'
+           // 'repo' is defined in the Jenkins Pipeline Git config
+           dir 'repo/.jenkins'
         }
     }
 
