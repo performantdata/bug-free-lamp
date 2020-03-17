@@ -1,13 +1,13 @@
 pipeline {
     agent {
-//         docker {
-//             image 'circleci/openjdk:8-jdk-buster'
-//             args '--volume $WORKSPACE/.cache:/root/.cache --volume $WORKSPACE/.ivy2:/root/.ivy2 --volume $WORKSPACE/.m2:/root/.m2 --volume $WORKSPACE/.sbt:/root/.sbt'
-//         }
         dockerfile {
-           filename 'Dockerfile.build'
-           // 'repo' is defined in the Jenkins Pipeline Git config
-           dir 'repo/.jenkins'
+            filename 'Dockerfile.build'
+
+            // 'repo' is defined in the Jenkins Pipeline Git config
+            dir 'repo/.jenkins'
+
+            // HOME=/home/circleci on this image
+            args '--volume $WORKSPACE/.cache:/home/circleci/.cache --volume $WORKSPACE/.ivy2:/home/circleci/.ivy2 --volume $WORKSPACE/.m2:/home/circleci/.m2 --volume $WORKSPACE/.sbt:/home/circleci/.sbt'
         }
     }
 
@@ -15,6 +15,8 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building..'
+                sh 'printenv'
+                sh 'id'
                 sh 'sbt test:compile'
                 archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
             }
@@ -39,8 +41,8 @@ pipeline {
 
     post {
         cleanup {
-            sh 'echo'
-//             sh 'rm -rf * .*'
+//             sh 'echo'
+            sh 'rm -rf \?'
         }
     }
 }
