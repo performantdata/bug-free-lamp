@@ -1,5 +1,5 @@
 pipeline {
-    def cwd = pwd()
+    cwd = pwd()
 
     agent {
         dockerfile {
