@@ -1,4 +1,6 @@
 pipeline {
+    def cwd = pwd()
+
     agent {
         dockerfile {
             filename 'Dockerfile.build'
@@ -6,7 +8,6 @@ pipeline {
             // 'repo' is defined in the Jenkins Pipeline Git config
             dir 'repo/.jenkins'
 
-            def cwd = pwd()
             // Jenkins' Docker setup mirrors the current directory into the image
             args "--env HOME=${cwd}"
         }
