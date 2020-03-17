@@ -1,6 +1,4 @@
 pipeline {
-    cwd = pwd()
-
     agent {
         dockerfile {
             filename 'Dockerfile.build'
@@ -9,7 +7,8 @@ pipeline {
             dir 'repo/.jenkins'
 
             // Jenkins' Docker setup mirrors the current directory into the image
-            args "--env HOME=${cwd}"
+            //TODO Create this from pwd().
+            args "--env HOME=${WORKSPACE}/griffon"
         }
     }
 
