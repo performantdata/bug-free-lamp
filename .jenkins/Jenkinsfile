@@ -8,7 +8,7 @@ pipeline {
 
             // HOME=/home/circleci on this image
             // 3434 is the circleci user/group
-            args '--user 3434:3434 --volume $WORKSPACE/.cache:/home/circleci/.cache --volume $WORKSPACE/.ivy2:/home/circleci/.ivy2 --volume $WORKSPACE/.m2:/home/circleci/.m2 --volume $WORKSPACE/.sbt:/home/circleci/.sbt'
+            args '--volume $WORKSPACE/.cache:/home/circleci/.cache --volume $WORKSPACE/.ivy2:/home/circleci/.ivy2 --volume $WORKSPACE/.m2:/home/circleci/.m2 --volume $WORKSPACE/.sbt:/home/circleci/.sbt'
         }
     }
 
