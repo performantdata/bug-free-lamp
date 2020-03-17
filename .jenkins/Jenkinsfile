@@ -7,7 +7,7 @@ pipeline {
             dir 'repo/.jenkins'
 
             // Jenkins' Docker setup mirrors the current directory into the image
-            args '--env HOME=$(pwd)'
+            args "--env HOME=$(pwd)"
         }
     }
 
