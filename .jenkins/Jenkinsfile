@@ -28,7 +28,7 @@ pipeline {
         stage('Test') {
             steps {
                 echo 'Testing..'
-                sh script: 'sbt test', label: 'Run tests'
+                sh script: 'cd repo && sbt test', label: 'Run tests'
             }
         }
         stage('Deploy') {
@@ -46,7 +46,7 @@ pipeline {
     post {
         cleanup {
 //             sh 'echo'
-            sh 'rm -rf project'
+            sh 'rm -rf foo'
         }
     }
 }
