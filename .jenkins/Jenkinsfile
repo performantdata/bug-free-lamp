@@ -5,7 +5,7 @@ pipeline {
     options {
         // See https://javadoc.jenkins.io/hudson/tasks/LogRotator.html
         buildDiscarder(logRotator(daysToKeepStr: '60', numToKeepStr: '100'))
-        checkoutToSubdirectory("${repoDir}")
+        checkoutToSubdirectory("${env.repoDir}")
         disableConcurrentBuilds()
         skipStagesAfterUnstable()
         timeout(time: 10, unit: 'MINUTES')
@@ -15,7 +15,7 @@ pipeline {
     agent {
         dockerfile {
             filename 'Dockerfile.build'
-            dir "${repoDir}/.jenkins"
+            dir "${env.repoDir}/.jenkins"
 
             // Jenkins' Docker setup mirrors the current directory into the image
             //TODO Create this from pwd().
@@ -23,7 +23,7 @@ pipeline {
 
 //            // Override the workdir applied by Jenkins via "docker run -w".
 //            // This doesn't work: Jenkins' takes precedence.
-//            args "--workdir=/var/lib/jenkins/workspace/griffon/${repoDir}"
+//            args "--workdir=/var/lib/jenkins/workspace/griffon/${env.repoDir}"
         }
     }
 
@@ -32,13 +32,13 @@ pipeline {
             steps {
                 echo 'Building..'
                 sh 'printenv'
-                sh script: "cd ${repoDir} && sbt test:compile", label: 'Compile the code'
+                sh script: "cd ${env.repoDir} && sbt test:compile", label: 'Compile the code'
             }
         }
         stage('Test') {
             steps {
                 echo 'Testing..'
-                sh script: "cd ${repoDir} && sbt test", label: 'Run tests'
+                sh script: "cd ${env.repoDir} && sbt test", label: 'Run tests'
             }
         }
         stage('Deploy') {
@@ -50,9 +50,9 @@ pipeline {
 
     post {
         always {
-            archiveArtifacts artifacts: "${repoDir}/target/scala-*/**", fingerprint: true
-            archiveArtifacts artifacts: "${repoDir}/target/streams/**", fingerprint: true
-            junit "${repoDir}/target/test-reports/**/*.xml"
+            archiveArtifacts artifacts: "${env.repoDir}/target/scala-*/**", fingerprint: true
+            archiveArtifacts artifacts: "${env.repoDir}/target/streams/**", fingerprint: true
+            junit "${env.repoDir}/target/test-reports/**/*.xml"
         }
         fixed {
             slackSend channel: '#dataingestion', color: 'good',
