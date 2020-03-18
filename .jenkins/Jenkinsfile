@@ -6,7 +6,7 @@ pipeline {
     options {
         // See https://javadoc.jenkins.io/hudson/tasks/LogRotator.html
         buildDiscarder(logRotator(daysToKeepStr: '60', numToKeepStr: '100'))
-        checkoutToSubdirectory("${env.repoDir}")
+//         checkoutToSubdirectory("${env.repoDir}")
         disableConcurrentBuilds()
         skipStagesAfterUnstable()
         timeout(time: 10, unit: 'MINUTES')
