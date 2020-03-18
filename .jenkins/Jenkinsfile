@@ -31,14 +31,18 @@ pipeline {
         stage('Build') {
             steps {
                 echo 'Building..'
-                sh 'printenv'
-                sh script: "cd ${env.repoDir} && sbt test:compile", label: 'Compile the code'
+                sh script: 'printenv', label: 'Print the environment'
+                dir("${env.repoDir}") {
+                    sh script: "sbt test:compile", label: 'Compile the code'
+                }
             }
         }
         stage('Test') {
             steps {
                 echo 'Testing..'
-                sh script: "cd ${env.repoDir} && sbt test", label: 'Run tests'
+                dir("${env.repoDir}") {
+                    sh script: "sbt test", label: 'Run tests'
+                }
             }
         }
         stage('Deploy') {
@@ -56,14 +60,15 @@ pipeline {
         }
         fixed {
             slackSend channel: '#dataingestion', color: 'good',
-                      message: "The pipeline ${currentBuild.fullDisplayName} completed successfully."
+                      message: "The pipeline <${env.BUILD_URL}|${currentBuild.fullDisplayName}> completed *successfully*. :tada:"
         }
         regression {
             slackSend channel: '#dataingestion', color: 'warning',
-                      message: "The pipeline ${currentBuild.fullDisplayName} has regressed."
+                      message: "The pipeline <${env.BUILD_URL}|${currentBuild.fullDisplayName}> has *regressed*. :boom:"
         }
         cleanup {
-            sh 'rm -rf .[a-z]* *'
+            dir("${env.repoDir}") { deleteDir() }
+            dir("${env.repoDir}@tmp") { deleteDir() }
         }
     }
 }
