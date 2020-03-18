@@ -21,14 +21,14 @@ pipeline {
                 echo 'Building..'
                 sh 'printenv'
                 sh 'pwd'
-                sh 'cd repo && sbt test:compile', label: 'Compile the code'
+                sh script: 'cd repo && sbt test:compile', label: 'Compile the code'
 //                 archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
             }
         }
         stage('Test') {
             steps {
                 echo 'Testing..'
-                sh 'sbt test', label: 'Run tests'
+                sh script: 'sbt test', label: 'Run tests'
             }
         }
         stage('Deploy') {
