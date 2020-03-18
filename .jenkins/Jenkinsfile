@@ -6,7 +6,7 @@ pipeline {
     options {
         // See https://javadoc.jenkins.io/hudson/tasks/LogRotator.html
         buildDiscarder(logRotator(daysToKeepStr: '60', numToKeepStr: '100'))
-//         checkoutToSubdirectory('repo')
+        checkoutToSubdirectory("${env.repoDir}")
         disableConcurrentBuilds()
         skipStagesAfterUnstable()
         timeout(time: 10, unit: 'MINUTES')
@@ -16,7 +16,7 @@ pipeline {
     agent {
         dockerfile {
             filename 'Dockerfile.build'
-            dir "${env.repoDir}/.jenkins"
+            dir 'repo/.jenkins'
 
             // Jenkins' Docker setup mirrors the current directory into the image
             //TODO Create this from pwd().
