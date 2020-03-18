@@ -1,11 +1,3 @@
 # Docker image for building/testing/deploying the project
 FROM circleci/openjdk:8-jdk-buster
-
-# The home directory
-ARG HOME
-ENV HOME $HOME
-
-# These JVM system properties are for sbt, and may be used by other Java applications.
-# sbt needs user.home for locating its caches.
-ENV JAVA_OPTS "-Duser.home=$HOME"
 RUN printenv

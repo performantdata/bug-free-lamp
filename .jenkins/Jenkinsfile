@@ -1,12 +1,15 @@
 pipeline {
     environment {
-        repoDir = 'repo'
-        BLUE_OCEAN_URL = "${env.JENKINS_URL}blue/organizations/jenkins/${env.JOB_NAME}/detail/${env.JOB_NAME}/${env.BUILD_NUMBER}/pipeline"
+        BLUE_OCEAN_URL = "${env.JENKINS_URL}blue/organizations/jenkins/${env.JOB_NAME}/detail/${env.JOB_BASE_NAME}/${env.BUILD_NUMBER}/pipeline/"
+
+        // These JVM system properties are for sbt, and may be used by other Java applications.
+        // sbt needs user.home for locating its caches.
+        JAVA_OPTS = "-Duser.home=${WORKSPACE}"
     }
     options {
         // See https://javadoc.jenkins.io/hudson/tasks/LogRotator.html
         buildDiscarder(logRotator(daysToKeepStr: '60', numToKeepStr: '100'))
-//         checkoutToSubdirectory("${env.repoDir}")
+
         disableConcurrentBuilds()
         skipStagesAfterUnstable()
         timeout(time: 10, unit: 'MINUTES')
@@ -16,15 +19,7 @@ pipeline {
     agent {
         dockerfile {
             filename 'Dockerfile.build'
-            dir 'repo/.jenkins'
-
-            // Jenkins' Docker setup mirrors the current directory into the image
-            //TODO Create this from pwd().
-            additionalBuildArgs '--build-arg HOME=/var/lib/jenkins/workspace/griffon'
-
-//            // Override the workdir applied by Jenkins via "docker run -w".
-//            // This doesn't work: Jenkins' takes precedence.
-//            args "--workdir=/var/lib/jenkins/workspace/griffon/${env.repoDir}"
+            dir '.jenkins'
         }
     }
 
@@ -33,17 +28,13 @@ pipeline {
             steps {
                 echo 'Building..'
                 sh script: 'printenv', label: 'Print the environment'
-                dir("${env.repoDir}") {
-                    sh script: "sbt test:compile", label: 'Compile the code'
-                }
+                sh script: "sbt test:compile", label: 'Compile the code'
             }
         }
         stage('Test') {
             steps {
                 echo 'Testing..'
-                dir("${env.repoDir}") {
-                    sh script: "sbt test", label: 'Run tests'
-                }
+                sh script: "sbt test", label: 'Run tests'
             }
         }
         stage('Deploy') {
@@ -55,25 +46,17 @@ pipeline {
 
     post {
         always {
-            archiveArtifacts artifacts: "${env.repoDir}/target/scala-*/**", fingerprint: true
-            archiveArtifacts artifacts: "${env.repoDir}/target/streams/**", fingerprint: true
-            junit "${env.repoDir}/target/test-reports/**/*.xml"
+            archiveArtifacts artifacts: "target/scala-*/**", fingerprint: true
+            archiveArtifacts artifacts: "target/streams/**", fingerprint: true
+            junit "target/test-reports/**/*.xml"
         }
         fixed {
             slackSend channel: '#dataingestion', color: 'good',
-                      message: "The pipeline <${env.BLUE_OCEAN_URL}|${currentBuild.fullDisplayName}> completed successfully. :tada:"
+                      message: "The pipeline <${env.BUILD_URL}|${currentBuild.fullDisplayName}> completed successfully. :tada:"
         }
         regression {
             slackSend channel: '#dataingestion', color: 'danger',
-                      message: "The pipeline <${env.BLUE_OCEAN_URL}|${currentBuild.fullDisplayName}> has *regressed*. :boom:"
-        }
-        cleanup {
-            // Get a fresh copy of the repo every time.
-            dir("${env.repoDir}") { deleteDir() }
-            dir("${env.repoDir}@tmp") { deleteDir() }
-
-            dir('null') { deleteDir() }
-            dir('null@tmp') { deleteDir() }
+                      message: "The pipeline <${env.BUILD_URL}|${currentBuild.fullDisplayName}> has *regressed*. :boom:"
         }
     }
 }
