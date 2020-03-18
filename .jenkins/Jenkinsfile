@@ -8,7 +8,10 @@ pipeline {
 
             // Jenkins' Docker setup mirrors the current directory into the image
             //TODO Create this from pwd().
-            args "--env HOME=/var/lib/jenkins/workspace/griffon"
+            additionalBuildArgs '--build-arg HOME=/var/lib/jenkins/workspace/griffon'
+
+            // Override the workdir applied by Jenkins via "docker run -w".
+            args '--workdir=/var/lib/jenkins/workspace/griffon/repo'
         }
     }
 
