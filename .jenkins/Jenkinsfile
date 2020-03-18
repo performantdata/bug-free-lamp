@@ -1,11 +1,12 @@
 pipeline {
     environment {
         repoDir = 'repo'
+        BLUE_OCEAN_URL = "${env.JENKINS_URL}blue/organizations/jenkins/${env.JOB_NAME}/detail/${env.JOB_NAME}/${env.BUILD_NUMBER}/pipeline"
     }
     options {
         // See https://javadoc.jenkins.io/hudson/tasks/LogRotator.html
         buildDiscarder(logRotator(daysToKeepStr: '60', numToKeepStr: '100'))
-        checkoutToSubdirectory('repo')
+//         checkoutToSubdirectory('repo')
         disableConcurrentBuilds()
         skipStagesAfterUnstable()
         timeout(time: 10, unit: 'MINUTES')
@@ -60,15 +61,19 @@ pipeline {
         }
         fixed {
             slackSend channel: '#dataingestion', color: 'good',
-                      message: "The pipeline <${env.BUILD_URL}|${currentBuild.fullDisplayName}> completed *successfully*. :tada:"
+                      message: "The pipeline <${env.BLUE_OCEAN_URL}|${currentBuild.fullDisplayName}> completed successfully. :tada:"
         }
         regression {
-            slackSend channel: '#dataingestion', color: 'warning',
-                      message: "The pipeline <${env.BUILD_URL}|${currentBuild.fullDisplayName}> has *regressed*. :boom:"
+            slackSend channel: '#dataingestion', color: 'danger',
+                      message: "The pipeline <${env.BLUE_OCEAN_URL}|${currentBuild.fullDisplayName}> has *regressed*. :boom:"
         }
         cleanup {
+            // Get a fresh copy of the repo every time.
             dir("${env.repoDir}") { deleteDir() }
             dir("${env.repoDir}@tmp") { deleteDir() }
+
+            dir('null') { deleteDir() }
+            dir('null@tmp') { deleteDir() }
         }
     }
 }
