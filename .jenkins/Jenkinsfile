@@ -20,6 +20,7 @@ pipeline {
             steps {
                 echo 'Building..'
                 sh 'printenv'
+                sh 'pwd'
                 sh 'sbt test:compile'
 //                 archiveArtifacts artifacts: '**/target/*.jar', fingerprint: true
             }
